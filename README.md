@@ -1,1 +1,2 @@
-# cvm-web-app
+# cvm-web-client
+An alternative client for CollabVM
