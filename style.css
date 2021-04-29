@@ -1,0 +1,49 @@
+* {
+    font-family: Arial;
+}
+
+body {
+    margin: 0px;
+    background: #212121;
+}
+
+#navbar {
+    padding: 12px;
+    padding-right: 0px;
+    background: #848484;
+}
+
+#navbar>* {
+    margin-right: 12px;
+}
+
+#navbar-logo {
+    font-size: 1.3em;
+}
+
+#loading {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0.2, 0.2, 0.2, 0.8);
+}
+
+#loading-indicator {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 3px solid #8080a020;
+    border-top-color: #8080a0ff;
+    border-radius: 50%;
+    animation: loading-spinning 1s infinite ease-in-out;
+}
+
+@keyframes loading-spinning {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
