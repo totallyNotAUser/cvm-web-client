@@ -5,16 +5,126 @@
 body {
     margin: 0px;
     background: #212121;
+    color: #cdcdcd;
+}
+
+.modal-wrapper {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0.2, 0.2, 0.2, 0.8);
+}
+
+.modal-content {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid #545454;
+    border-radius: 4px;
+    background: #313131;
+    width: 70vw;
+    max-width: 80vw;
+    overflow-x: hidden;
+}
+
+.modal-content>* {
+}
+
+.modal-page-wrapper {
+    display: flex;
+}
+
+.modal-page {
+    min-width: 100%;
+}
+
+.modal-header {
+    border-bottom: 1px solid #545454;
+    padding: 8px;
+}
+
+.modal-title {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.modal-close {
+    float: right;
+    margin-top: -8px;
+    font-size: 2em;
+    user-select: none;
+}
+.modal-close:hover {
+    color: #ababab;
+}
+
+.modal-body {
+    padding: 8px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 8px;
+    border-top: 1px solid #545454;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+}
+.modal-footer>* {
+    margin-left: 8px;
+}
+
+button {
+    padding: 6px;
+    border: 1px solid #545454;
+    border-radius: 4px;
+    background: #484848;
+    color: #efefef;
+}
+button:hover {
+    filter: brightness(85%);
+}
+button:active {
+    filter: brightness(75%)
+}
+button.btn-green {
+    background: #129912;
+}
+button.btn-red {
+    background: #991212;
+}
+
+textarea, input[type=text] {
+    background: #404040;
+    color: #efefef;
+    border: 1px solid #545454;
+}
+textarea:focus-visible, input[type=text]:focus-visible {
+    border: 1px solid #424242;
+    outline: none !important;
 }
 
 #navbar {
     padding: 12px;
     padding-right: 0px;
     background: #848484;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
 }
 
 #navbar>* {
     margin-right: 12px;
+    color: #121212;
+    user-select: none;
+}
+#navbar>*:hover:not(#navbar-logo) {
+    color: #363636;
+    cursor: pointer;
 }
 
 #navbar-logo {
@@ -46,4 +156,38 @@ body {
 @keyframes loading-spinning {
     0%   { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+#vm-list {
+    display: flex;
+    flex-flow: row wrap;
+    padding-top: 8px;
+}
+
+.vm-list-entry {
+    margin: 12px;
+    border: 1px solid #545454;
+    border-radius: 4px;
+    padding: 8px;
+    width: 20%;
+    background: #313131;
+    cursor: pointer;
+}
+.vm-list-entry:hover {
+    text-decoration: underline;
+}
+.vm-list-entry img {
+    max-width: 100%;
+}
+
+#vm-view {
+    margin-top: 24px;
+}
+
+#vm-header {
+    font-size: 1.4em;
+}
+
+#vm-buttons {
+    font-size: 1.1em;
 }

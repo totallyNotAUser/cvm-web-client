@@ -7,26 +7,97 @@
     <link rel="stylesheet" href="style.css" media="all">
 </head>
 <body>
+    <div class="modal-wrapper" id="welcome-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">CollabVM++ first time setup</span>
+            </div>
+            <div class="modal-page-wrapper">
+                <div id="welcome-page-1" class="modal-page">
+                    <div class="modal-body">
+                        <p>Welcome to CollabVM++!</p>
+                        <p>This web app is intended to replace the normal collabvm web apps. You can have a list of all VMs on one page! CollabVM++ also has more features, and even more coming soon!!</p>
+                        <p>We hope you will enjoy using CollabVM++</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-green" onclick="modalPageForward('#welcome-page-1', '#welcome-page-2');firstTimeSetupLoadDefaults()">Next</button>
+                    </div>
+                </div>
+                <div id="welcome-page-2" style="display: none;" class="modal-page">
+                    <div class="modal-body">
+                        <p>Let's choose your username and the CollabVM servers you use.</p>
+                        <label>Username: <input type="text" id="welcome-setup-username" placeholder="username..." maxlength="20" size="20"></label><br>
+                        <p>Enter one server IP per line. You can change them later in settings.</p>
+                        <textarea id="welcome-setup-server-list" cols="70" rows="16"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="modalPageBack('#welcome-page-2', '#welcome-page-1')">Back</button>
+                        <button onclick="modalPageForward('#welcome-page-2', '#welcome-page-3');firstTimeSetupSaveSettings()" class="btn-green">Next</button>
+                    </div>
+                </div>
+                <div id="welcome-page-3" style="display: none;" class="modal-page">
+                    <div class="modal-body">
+                        All done! Now click "Finish" and start using CollabVM++
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="modalPageBack('#welcome-page-3', '#welcome-page-2')">Back</button>
+                        <button onclick="localStorage.setItem('cvmClientUsed', true);closeCurrentModal(() => window.location.reload())" class="btn-green">Finish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-wrapper" id="settings-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Settings</span>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label>Username: <input type="text" id="settings-username" placeholder="username..." maxlength="20" size="20"></label><br>
+                Servers: <br>
+                <textarea id="settings-servers" cols="70" rows="10"></textarea>
+                <br><br>
+                <label>Chat sound: <input type="text" id="settings-chat-sound" size="50"></label><br><br>
+                <button class="btn-red" onclick="resetConfirmation()">Reset all settings</button>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeCurrentModal()">Cancel</button>
+                <button class="btn-green" onclick="saveSettingsFromUI();closeCurrentModal()">Save</button>
+            </div>
+        </div>
+    </div>
     <div id="navbar">
-        <div id="navbar-logo">CollabVM</div>
+        <span id="navbar-logo">CollabVM</span>
+        <span id="navbar-back" style="display: none;" onclick="exitVM()">Back</span>
+        <span onclick="loadSettingsToUI();openModal('settings-modal')">Settings</span>
     </div>
     <div id="vm-list">
     </div>
     <div id="vm-view" style="display:none;">
-        <div><h2 id="vm-header"></h2></div>
-        <div><canvas id="vm-canvas"></canvas></div>
-        <div id="vm-buttons">
-            <div>
-                <button>Take turn</button>
-                <button>End turn</button>
-                <button>Keyboard</button>
-                <button>Vote Yes</button>
-                <button>Vote No</button>
+        <center>
+            <div id="vm-header">Loading...</div>
+        </center>
+        <center>
+            <canvas id="vm-canvas"></canvas>
+        </center>
+        <center>
+            <div id="vm-buttons">
+                <div>
+                    <button onclick="takeTurn()">Take turn</button>
+                    <button onclick="endTurn()" style="display: none;">End turn</button>
+                    <button onclick="toggleKeyboard()">Keyboard</button>
+                    <button onclick="voteYes()">Vote Yes</button>
+                    <button onclick="voteNo()">Vote No</button>
+                </div>
             </div>
-        </div>
+        </center>
         <!-- TODO -->
     </div>
     <div id="loading"><div id="loading-indicator"></div></div>
+    <script src="modal.js"></script>
+    <script src="firsttime.js"></script>
+    <script src="settings.js"></script>
     <script src="index.js"></script>
 </body>
 </html>
