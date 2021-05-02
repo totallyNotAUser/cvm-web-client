@@ -370,7 +370,7 @@ class VMChat {
         $('<div>').addClass('chat-message').append(
             JSON.parse(localStorage.getItem('showChatTime')) ? $('<span>').addClass('chat-message-time').text(timeStr) : null,
             $('<span>').addClass('chat-message-username').text(user),
-            $('<span>').text(text)
+            $('<span>').text(text.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#x27;", "'").replaceAll("&quot;", "\"").replaceAll("&amp;", "&").replaceAll("&#x2F;", "/"))
         ).appendTo('#chat-display');
         $('#chat-display').animate({scrollTop: $('#chat-display')[0].scrollHeight}, 0);
     }
