@@ -147,8 +147,15 @@ class VMDisplay {
             123: [0xFFC9], // f12
             144: [0xFF7F], // num lock
             145: [0xFF14], // scroll lock
+            222: [39],
+            188: [44],
             173: [45], // - key
+            190: [46],
             191: [47], // / key
+            219: [91],
+            220: [92],
+            221: [93],
+            192: [96],
             225: [0xFE03]  // altgraph (iso_level3_shift)
         };
         let onkb = (press, e) => {
