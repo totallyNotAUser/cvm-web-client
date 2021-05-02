@@ -184,10 +184,37 @@ class VMDisplay {
 
 class VMVoting {
     constructor() {
-
+        this.msInterval = null;
     }
-    handleMsg(msg) {
-
+    updateVoteStats(arr) {
+        $('#votes-yes').text(arr[3]);
+        $('#votes-no').text(arr[4]);
+        if (this.msInterval) clearInterval(this.msInterval);
+        this.voteTime = parseInt(arr[2], 10)
+        let interval = () => {
+            this.voteTime -= 1000;
+            let seconds = Math.floor(this.voteTime / 1000)
+            if (seconds <= 0) clearInterval(this.msInterval);
+            else $('#vote-time').text(seconds);
+        };
+        interval();
+        this.msInterval = setInterval(interval, 1000);
+    }
+    handleMsg(arr) {
+        if (arr[0] !== 'vote') return;
+        switch(parseInt(arr[1], 10)) {
+            case 0: // vote starts
+            case 1: // vote updates
+                $('#vote-status').show();
+                this.updateVoteStats(arr)
+                break;
+            case 2: // vote ends
+                $('#vote-status').hide();
+                break;
+            case 3: // vote complains about delay
+                modalAlert('You can\'t vote right now', `A vote reset happened recently. Please wait ${arr[2]} more seconds before starting a vote reset.`)
+                break;
+        }
     }
 }
 
@@ -440,6 +467,8 @@ function showVM(imageData, title, onClick) {
 if (localStorage.getItem('cvmClientUsed') == null) {
     firstTimeInit();
 }
+
+applySettings();
 
 function loadVMList() {
     let servers = JSON.parse(localStorage.getItem('servers'));

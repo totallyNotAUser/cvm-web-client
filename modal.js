@@ -72,3 +72,14 @@ function modalPageBack(a, b) {
         'margin-left': '0%', 'margin-right': '0%', 'opacity': '100%', 'height': '100%'
     }, 400, 'swing');
 }
+
+function modalAlert(header, text) {
+    makeSimpleModal('alert-modal', header, text, [
+        {
+            classes: 'btn-green',
+            html: 'OK',
+            click: () => closeCurrentModal(() => destroyModal('alert-modal'))
+        }
+    ]);
+    openModal('alert-modal');
+}

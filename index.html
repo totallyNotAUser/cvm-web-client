@@ -60,7 +60,8 @@
                 <br><br>
                 <label>Chat sound: <input type="text" id="settings-chat-sound" size="50"></label><br><br>
                 <label>Show chat time<input id="settings-chat-time" type="checkbox" name=""></label><br>
-                <label>Show chat time in UTC<input id="settings-chat-time-utc" type="checkbox" name=""></label><br>
+                <label>Show chat time in UTC<input id="settings-chat-time-utc" type="checkbox" name=""></label><br><br>
+                <label>Make VM view fit screen horizontally<input id="settings-vm-view-fit" type="checkbox" name=""></label><br><br>
                 <button class="btn-red" onclick="resetConfirmation()">Reset all settings</button>
             </div>
             <div class="modal-footer">
@@ -85,6 +86,10 @@
         </center>
         <center>
             <div id="turn-status"></div>
+            <div id="vote-status" style="display:none;">
+                <span id="vote-time">...</span> seconds left until vote ends<br>
+                yes - <span id="votes-yes">...</span> votes; no - <span id="votes-no">...</span> votes
+            </div>
             <div id="vm-buttons">
                 <div>
                     <button id="turn-btn" onclick="takeTurn()">Take turn</button>

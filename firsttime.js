@@ -27,4 +27,5 @@ function firstTimeSetupSaveSettings() {
     localStorage.setItem('chatSound', 'http://computernewb.com/collab-vm/notify.ogg')
     localStorage.setItem('showChatTime', JSON.stringify(true));
     localStorage.setItem('showChatTimeInUTC', JSON.stringify(true));
+    localStorage.setItem('vmViewFit', JSON.stringify(false));
 }

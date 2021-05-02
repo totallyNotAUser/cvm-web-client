@@ -25,6 +25,7 @@ function loadSettingsToUI() {
     $('#settings-chat-sound').val(localStorage.getItem('chatSound'));
     $('#settings-chat-time').prop('checked', JSON.parse(localStorage.getItem('showChatTime')));
     $('#settings-chat-time-utc').prop('checked', JSON.parse(localStorage.getItem('showChatTimeInUTC')));
+    $('#settings-vm-view-fit').prop('checked', JSON.parse(localStorage.getItem('vmViewFit')));
 }
 
 function saveSettingsFromUI() {
@@ -33,5 +34,14 @@ function saveSettingsFromUI() {
     localStorage.setItem('chatSound', $('#settings-chat-sound').val());
     localStorage.setItem('showChatTime', JSON.stringify($('#settings-chat-time').prop('checked')));
     localStorage.setItem('showChatTimeInUTC', JSON.stringify($('#settings-chat-time-utc').prop('checked')));
+    localStorage.setItem('vmViewFit', JSON.stringify($('#settings-vm-view-fit').prop('checked')));
+
+    if ($('#settings-vm-view-fit').prop('checked')) $('canvas').css('max-width', '97vw');
+    else $('canvas').css('max-width', 'auto');
+
     if (currentConn) currentConn.sendGuac(['rename', $('#settings-username').val()]); // rename if we are connected
+}
+
+function applySettings() {
+    if (JSON.parse(localStorage.getItem('vmViewFit'))) $('canvas').css('max-width', '97vw');
 }
