@@ -100,8 +100,8 @@ class VMDisplay {
             cancelEvent(e);
             updateMouseBtnVars(e);
             let rect = e.target.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            let y = e.clientY - rect.top;
+            let x = (e.clientX - rect.left) / this.canvas.getBoundingClientRect().width * this.size.x;
+            let y = (e.clientY - rect.top) / this.canvas.getBoundingClientRect().height * this.size.y;
             sendMouse(x, y);
         };
         this.canvas.onmouseup = onmouse;
