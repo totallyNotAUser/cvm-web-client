@@ -228,7 +228,7 @@ canvas.waiting-turn {
 }
 
 #user-list {
-    max-height: 10em;
+    max-height: 15em;
     overflow: auto;
 }
 
@@ -270,7 +270,7 @@ canvas.waiting-turn {
 }
 
 #chat-display {
-    height: 12em;
+    height: 16em;
     border: 1px solid #545454;
     border-bottom: 0;
     background: #313131;
