@@ -160,7 +160,6 @@ class VMDisplay {
             }
             if (keycodeKeysyms.hasOwnProperty(keycode)) keycode = keycodeKeysyms[keycode][e.location] || keycodeKeysyms[keycode][0];
             else if (!isShiftDown && keycode >= 65 && keycode <= 90) keycode = keycode | 0b00100000; // make letter non caps (ascii) if its A, Z or in between
-            console.log('key ', keycode);
             currentConn.sendGuac(['key', keycode.toString(), press]);
         }
         this.canvas.onkeydown = e => onkb('1', e);
@@ -189,6 +188,54 @@ class VMVoting {
     }
     handleMsg(msg) {
 
+    }
+}
+
+class VMTurnTime {
+    constructor() {
+        this.interval = null;
+    }
+    updateWaitingTurn(arr) {
+        if (this.interval) clearInterval(this.interval);
+        let ms = parseInt(arr[arr.length - 1], 10);
+        let intervalFn = () => {
+            $('#turn-status').text(`Waiting for turn in ${Math.floor(ms/1000)} seconds`);
+            ms -= 1000;
+            if (ms < 0) {
+                this.updateDoesNotHaveTurn();
+                return;
+            }
+        };
+        intervalFn();
+        this.interval = setInterval(intervalFn, 1000);
+    }
+    updateHasTurn(arr) {
+        if (this.interval) clearInterval(this.interval);
+        let ms = parseInt(arr[1], 10);
+        let intervalFn = () => {
+            $('#turn-status').text(`You have ${Math.floor(ms/1000)} seconds until your turn ends`);
+            ms -= 1000;
+            if (ms < 0) {
+                this.updateDoesNotHaveTurn();
+                return;
+            }
+        };
+        intervalFn();
+        this.interval = setInterval(intervalFn, 1000);
+    }
+    updateDoesNotHaveTurn() {
+        $('#turn-status').text('');
+        if (this.interval) clearInterval(this.interval);
+    }
+    handleMsg(arr) {
+        if (arr[0] !== 'turn') return;
+        if ((arr.length - parseInt(arr[2], 10)) > 3) { // if we are waiting for turn
+            this.updateWaitingTurn(arr);
+        } else if (arr[3] == currentUsername) { // if we have turn
+            this.updateHasTurn(arr);
+        } else {
+            this.updateDoesNotHaveTurn();
+        }
     }
 }
 
@@ -225,6 +272,13 @@ class VMUserList {
             if (noTurnUsers[i].username == currentUsername)
                 user.addClass('user-current');
             user.appendTo('#user-list');
+        }
+        if (turnUsers.some(x => x.username == currentUsername)) { // we have/waiting turn
+            $('#turn-btn').hide();
+            $('#end-turn-btn').show();
+        } else {
+            $('#turn-btn').show();
+            $('#end-turn-btn').hide();
         }
     }
     addUser(username, perm) {
@@ -327,6 +381,7 @@ async function enterVM(ip, name, title) {
     $('#vm-header').html(`IP: ${ip}, name: ${name}<br>${title}`);
     let display = new VMDisplay();
     let voting = new VMVoting();
+    let turnTime = new VMTurnTime();
     let userList = new VMUserList();
     let chat = new VMChat();
     currentConn = new VMWebsocket(ip, {
@@ -344,6 +399,7 @@ async function enterVM(ip, name, title) {
             } else {
                 display.handleMsg(msg);
                 voting.handleMsg(msg);
+                turnTime.handleMsg(msg);
                 userList.handleMsg(msg);
                 chat.handleMsg(msg);
             }
