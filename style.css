@@ -188,6 +188,14 @@ textarea:focus-visible, input[type=text]:focus-visible {
     font-size: 1.4em;
 }
 
+canvas.has-turn {
+    box-shadow: 0px 0px 20px 5px #24bbbb;
+}
+
+canvas.waiting-turn {
+    box-shadow: 0px 0px 20px 5px #bbbb24;
+}
+
 #vm-buttons {
     font-size: 1.1em;
 }

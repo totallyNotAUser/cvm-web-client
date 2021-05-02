@@ -300,9 +300,13 @@ class VMUserList {
                 user.addClass('user-current');
             user.appendTo('#user-list');
         }
+        $('canvas').removeClass('has-turn waiting-turn');
         if (turnUsers.some(x => x.username == currentUsername)) { // we have/waiting turn
             $('#turn-btn').hide();
             $('#end-turn-btn').show();
+            let user = turnUsers.filter(x => x.username == currentUsername)[0];
+            if (user.turn == 0) $('canvas').addClass('has-turn');
+            if (user.turn > 0) $('canvas').addClass('waiting-turn');
         } else {
             $('#turn-btn').show();
             $('#end-turn-btn').hide();
