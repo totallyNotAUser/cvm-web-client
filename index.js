@@ -13,12 +13,12 @@ class VMWebsocket {
             this.ws.onmessage = this.onMessageWrapper.bind(this);
         }
         if (this.eventCallbacks.onOpen !== null) this.ws.onopen = this.eventCallbacks.onOpen.bind(this);
-        if (this.eventCallbacks.onClose !== null) this.ws.onclose = this.reconnectOnDisconnect ? this.callOnCloseAndReconnect : this.eventCallbacks.onClose.bind(this);
+        if (this.eventCallbacks.onClose !== null) this.ws.onclose = this.reconnectOnDisconnect ? this.callOnCloseAndReconnect.bind(this) : this.eventCallbacks.onClose.bind(this);
         if (this.eventCallbacks.onError !== null) this.ws.onerror = this.eventCallbacks.onError.bind(this);
     }
     callOnCloseAndReconnect(ev) {
         this.eventCallbacks.onClose.bind(this);
-        makeAndConnectWS();
+        this.makeAndConnectWS();
     }
     onMessageWrapper(ev) {
         this.onMessage(this.decodeGuac(ev.data));
@@ -48,6 +48,7 @@ class VMWebsocket {
         return result;
     }
     disconnect() {
+        this.ws.onclose = null;
         this.sendGuac(['disconnect']);
         this.ws.close();
     }
@@ -441,7 +442,19 @@ async function enterVM(ip, name, title) {
                 userList.handleMsg(msg);
                 chat.handleMsg(msg);
             }
-        }
+        },
+        onClose: e => {
+            $('#loading').show();
+            $('#user-list').empty();
+            $('#chat-display').empty();
+            userList.users = [];
+        },
+        onError: e => {
+            $('#loading').show();
+            $('#user-list').empty();
+            $('#chat-display').empty();
+            userList.users = [];
+        },
     }, true);
 }
 
