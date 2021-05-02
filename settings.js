@@ -28,5 +28,5 @@ function loadSettingsToUI() {
 function saveSettingsFromUI() {
     localStorage.setItem('username', $('#settings-username').val());
     localStorage.setItem('servers', JSON.stringify($('#settings-servers').val().split('\n')));
-    localStorage.setItem('chatSound', $('#settings-chat-sound'));
+    localStorage.setItem('chatSound', $('#settings-chat-sound').val());
 }

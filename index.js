@@ -192,21 +192,108 @@ class VMVoting {
     }
 }
 
+const USER_PERM_GUEST = '0';
+const USER_PERM_ADMIN = '2';
+const USER_PERM_MOD = '3';
+
 class VMUserList {
     constructor() {
-
+        this.users = [];
+    }
+    updateUI() {
+        $('#user-list-header').text(`Users online: ${this.users.length}`)
+        $('#user-list').empty();
+        let sortedUsers = this.users.sort((a, b) => a.turn - b.turn);
+        let turnUsers = sortedUsers.filter(x => x.turn >= 0);
+        let noTurnUsers = sortedUsers.filter(x => x.turn < 0);
+        for (let i = 0; i < turnUsers.length; i++) {
+            let user = $('<div>').addClass('user-list-entry').addClass(turnUsers[i].turn == 0 ? 'has-turn' : 'waiting-turn').text(turnUsers[i].username);
+            if (turnUsers[i].perm == 3) // mod
+                user.addClass('user-moderator');
+            else if (turnUsers[i].perm == 2) // admin
+                user.addClass('user-admin');
+            if (turnUsers[i].username == currentUsername)
+                user.addClass('user-current');
+            user.appendTo('#user-list');
+        }
+        for (let i = 0; i < noTurnUsers.length; i++) {
+            let user = $('<div>').addClass('user-list-entry').text(noTurnUsers[i].username);
+            if (noTurnUsers[i].perm == 3) // mod
+                user.addClass('user-moderator');
+            else if (noTurnUsers[i].perm == 2) // admin
+                user.addClass('user-admin');
+            if (noTurnUsers[i].username == currentUsername)
+                user.addClass('user-current');
+            user.appendTo('#user-list');
+        }
+    }
+    addUser(username, perm) {
+        this.users.push({ username, perm, turn: -1 });
+    }
+    addUsers(arr) {
+        for (let i = 0; i < arr.length; i+=2) {
+            this.addUser(arr[i], arr[i+1]);
+        }
+        this.updateUI();
+    }
+    remUser(user) {
+        this.users = this.users.filter(x => x.username != user);
+    }
+    remUsers(arr) {
+        arr.forEach(this.remUser.bind(this));
+        this.updateUI();
+    }
+    handleTurn(arr) {
+        this.users = this.users.map(x => {
+            x.turn = -1;
+            return x;
+        });
+        arr.forEach((e, i) => this.users.map(x => {
+            if (x.username != e) return;
+            x.turn = i;
+            return x;
+        }));
+        this.updateUI();
     }
     handleMsg(msg) {
-
+        if (msg[0] == 'adduser') this.addUsers(msg.slice(2));
+        else if (msg[0] == 'remuser') this.remUsers(msg.slice(2));
+        else if (msg[0] == 'turn') this.handleTurn(msg.slice(3));
     }
 }
 
 class VMChat {
     constructor() {
-
+        this.chatSound = new Audio(localStorage.getItem('chatSound'));
+        $('#chat-input').keydown(e => {
+            if (e.keyCode == 13) this.sendMsg.bind(this)(); // enter key
+        });
+        $('#chat-send').click(this.sendMsg.bind(this));
+    }
+    sendMsg() {
+        currentConn.sendGuac(['chat', $('#chat-input').val()]);
+        $('#chat-input').val('');
+    }
+    displayChatMsg(user, text) {
+        let timeStr = 'tt:im:ee';
+        $('<div>').addClass('chat-message').append(
+            $('<span>').addClass('chat-message-time').text(timeStr),
+            $('<span>').addClass('chat-message-username').text(user),
+            $('<span>').text(text)
+        ).appendTo('#chat-display');
+        $('#chat-display').animate({scrollTop: $('#chat-display')[0].scrollHeight}, 0);
+    }
+    playChatSound() {
+        this.chatSound.play();
+    }
+    displayChatMsgs(arr) {
+        for (let i = 0; i < arr.length; i += 2) {
+            this.displayChatMsg(arr[i], arr[i+1]);
+        }
+        this.playChatSound();
     }
     handleMsg(msg) {
-
+        if (msg[0] == 'chat') this.displayChatMsgs(msg.slice(1));
     }
 }
 
@@ -231,6 +318,7 @@ async function enterVM(ip, name, title) {
     $('#vm-view').show();
     $('#navbar-back').show();
     $('#loading').show();
+    $('#vm-header').html(`IP: ${ip}, name: ${name}<br>${title}`);
     let display = new VMDisplay();
     let voting = new VMVoting();
     let userList = new VMUserList();
@@ -258,6 +346,9 @@ async function enterVM(ip, name, title) {
 }
 
 function exitVM() {
+    $('#chat-display').empty();
+    $('#user-list').empty();
+    $('#vm-header').html('Loading...');
     $('#navbar-back').hide();
     $('#vm-view').hide();
     $('#loading').show();
