@@ -277,9 +277,9 @@ class VMChat {
     displayChatMsg(user, text) {
         let time = new Date();
         if (JSON.parse(localStorage.getItem('showChatTimeInUTC'))) {
-            let timeStr =  `${time.getUTCHours().toString().padStart(2, '0');}:${time.getUTCMinutes().toString().padStart(2, '0');}:${time.getUTCSeconds().toString().padStart(2, '0');}`;
+            let timeStr =  `${time.getUTCHours().toString().padStart(2, '0')}:${time.getUTCMinutes().toString().padStart(2, '0')}:${time.getUTCSeconds().toString().padStart(2, '0')}`;
         } else {
-            let timeStr = `${time.getHours().toString().padStart(2, '0');}:${time.getMinutes().toString().padStart(2, '0');}:${time.getSeconds().toString().padStart(2, '0');}`;
+            let timeStr = `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}:${time.getSeconds().toString().padStart(2, '0')}`;
         }
         $('<div>').addClass('chat-message').append(
             JSON.parse(localStorage.getItem('showChatTime')) ? $('<span>').addClass('chat-message-time').text(timeStr) : null,
