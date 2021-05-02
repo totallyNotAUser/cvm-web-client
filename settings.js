@@ -33,4 +33,5 @@ function saveSettingsFromUI() {
     localStorage.setItem('chatSound', $('#settings-chat-sound').val());
     localStorage.setItem('showChatTime', JSON.stringify($('#settings-chat-time').prop('checked')));
     localStorage.setItem('showChatTimeInUTC', JSON.stringify($('#settings-chat-time-utc').prop('checked')));
+    if (currentConn) currentConn.sendGuac(['rename', $('#settings-username').val()]); // rename if we are connected
 }
