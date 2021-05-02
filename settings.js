@@ -23,10 +23,14 @@ function loadSettingsToUI() {
     $('#settings-username').val(localStorage.getItem('username'));
     $('#settings-servers').val(JSON.parse(localStorage.getItem('servers')).join('\n'));
     $('#settings-chat-sound').val(localStorage.getItem('chatSound'));
+    $('#settings-chat-time').prop('checked', JSON.parse(localStorage.getItem('showChatTime')));
+    $('#settings-chat-time-utc').prop('checked', JSON.parse(localStorage.getItem('showChatTimeInUTC')));
 }
 
 function saveSettingsFromUI() {
     localStorage.setItem('username', $('#settings-username').val());
     localStorage.setItem('servers', JSON.stringify($('#settings-servers').val().split('\n')));
     localStorage.setItem('chatSound', $('#settings-chat-sound').val());
+    localStorage.setItem('showChatTime', JSON.stringify($('#settings-chat-time').prop('checked')));
+    localStorage.setItem('showChatTimeInUTC', JSON.stringify($('#settings-chat-time-utc').prop('checked')));
 }

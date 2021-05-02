@@ -25,4 +25,6 @@ function firstTimeSetupSaveSettings() {
     localStorage.setItem('username', $('#welcome-setup-username').val());
     localStorage.setItem('servers', JSON.stringify($('#welcome-setup-server-list').val().split('\n')));
     localStorage.setItem('chatSound', 'http://computernewb.com/collab-vm/notify.ogg')
+    localStorage.setItem('showChatTime', JSON.stringify(true));
+    localStorage.setItem('showChatTimeInUTC', JSON.stringify(true));
 }
