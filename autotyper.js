@@ -124,23 +124,19 @@ const _autotyperCmdHandlers = {
     ':#': _handlerComment,
 }
 
-async function _autotyperExecCommand(_line) {
-    let line = _line
-    while (line.startsWith(': ')) { // ':   cmd' -> ':cmd'
-        line = line.replace(': ', ':');
-    }
-    let arr = line.split(' ');
-    let cmd = arr[0];
-    await _autotyperCmdHandlers[cmd](line);
-}
-
 async function _autotyperRunScript(s) {
     const cmds = s.split('\n').slice(1);
     for (let i = 0; i < cmds.length; i++) {
         if (!cmds[i].startsWith(':')) {
             await _autotyperType(cmds[i]);
         } else {
-            await _autotyperExecCommand(cmds[i]);
+            let line = cmds[i];
+            while (line.startsWith(': ')) { // ':   cmd' -> ':cmd'
+                line = line.replace(': ', ':');
+            }
+            let arr = line.split(' ');
+            let cmd = arr[0];
+            await _autotyperCmdHandlers[cmd](line);
         }
     }
 }
