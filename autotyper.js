@@ -145,7 +145,6 @@ async function _autotyperType(text) {
     for (let i = 0; i < text.length; i++) {
         let _key = text[i];
         let key = _autotyperKeysToCVM[_key] || [_key.charCodeAt(0)];
-        console.log(key == _key, key, _key);
         for (let j = 0; j < key.length; j++) {
             currentConn.sendGuac(['key', key[j].toString(), '1']);
             await sleep(3);
