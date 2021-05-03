@@ -90,6 +90,8 @@ async function _handlerSleep(line) {
     await sleep(ms);
 }
 
+function _handlerComment(line) {}
+
 const _autotyperCmdHandlers = {
     ':key': _handlerKey,
     ':keydown': _handlerKeydown,
@@ -97,6 +99,7 @@ const _autotyperCmdHandlers = {
     ':newline': _handlerEnter,
     ':enter': _handlerEnter,
     ':sleep': _handlerSleep,
+    ':#': _handlerComment,
 }
 
 async function _autotyperExecCommand(line) {
