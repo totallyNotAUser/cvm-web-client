@@ -124,19 +124,43 @@ const _autotyperCmdHandlers = {
     ':#': _handlerComment,
 }
 
+function _autotyperEvalExpr(expr) {
+    return !!eval(expr);
+}
+
+function _autotyperRemoveIndent(_line) {
+    let line = _line;
+    while (line.startsWith(': ')) { // ':   cmd' -> ':cmd'
+        line = line.replace(': ', ':');
+    }
+    return line
+}
+
 async function _autotyperRunScript(s) {
     const cmds = s.split('\n').slice(1);
-    for (let i = 0; i < cmds.length; i++) {
+    for (let i = 0; i < cmds.length;) {
         if (!cmds[i].startsWith(':')) {
             await _autotyperType(cmds[i]);
+            i++;
         } else {
-            let line = cmds[i];
-            while (line.startsWith(': ')) { // ':   cmd' -> ':cmd'
-                line = line.replace(': ', ':');
-            }
+            let line = _autotyperRemoveIndent(cmds[i]);
             let arr = line.split(' ');
             let cmd = arr[0];
-            await _autotyperCmdHandlers[cmd](line);
+            if (cmd == ':if' || cmd == ':elseif') {
+                let exprResult = _autotyperEvalExpr(arr.slice(1).join(' '));
+                if (!exprResult) {
+                    while (![':elseif', ':else', ':endif'].includes(_autotyperRemoveIndent(cmds[i]).split(' ')[0])) i++;
+                    if ([':else', ':endif'].includes(_autotyperRemoveIndent(cmds[i]).split(' ')[0])) i++;
+                } else i++
+            } else if (cmd == ':else') {
+                while (_autotyperRemoveIndent(cmds[i]) != ':endif') i++;
+            } else if (cmd == ':endif') {
+                i++;
+            }
+            else {
+                await _autotyperCmdHandlers[cmd](line);
+                i++;
+            }
         }
     }
 }
