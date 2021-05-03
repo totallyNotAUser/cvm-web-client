@@ -40,6 +40,28 @@ const _autotyperKeysToCVM = {
     'f12':       [0xFFC9],
     'numlock':   [0xFF7F],
     'scrolllock':[0xFF14],
+    // these are the keys that need to be translated (for example, '!' -> shift+1)
+    '~':         [65505, 96],
+    '!':         [65505, 49],
+    '@':         [65505, 50],
+    '#':         [65505, 51],
+    '$':         [65505, 52],
+    '%':         [65505, 53],
+    '^':         [65505, 54],
+    '&':         [65505, 55],
+    '*':         [65505, 56],
+    '(':         [65505, 57],
+    ')':         [65505, 48],
+    '_':         [65505, 45],
+    '+':         [65505, 61],
+    '{':         [65505, 91],
+    '}':         [65505, 93],
+    ':':         [65505, 59],
+    '"':         [65505, 39],
+    '|':         [65505, 92],
+    '<':         [65505, 44],
+    '>':         [65505, 46],
+    '?':         [65505, 47],
 }
 
 async function _handlerKey(line) {
@@ -48,11 +70,11 @@ async function _handlerKey(line) {
         let keys = _autotyperKeysToCVM[codes[i]] || [codes[i]];
         for (let j = 0; j < keys.length; j++) {
             currentConn.sendGuac(['key', keys[j].toString(), '1']);
-            await sleep(5);
+            await sleep(3);
         };
         for (let j = 0; j < keys.length; j++) {
             currentConn.sendGuac(['key', keys[j].toString(), '0']);
-            await sleep(5);
+            await sleep(3);
         };
     }
 }
@@ -63,7 +85,7 @@ async function _handlerKeydown(line) {
         let keys = _autotyperKeysToCVM[codes[i]] || [codes[i]];
         for (let j = 0; j < keys.length; j++) {
             currentConn.sendGuac(['key', keys[j].toString(), '1']);
-            await sleep(5);
+            await sleep(3);
         };
     }
 }
@@ -74,14 +96,14 @@ async function _handlerKeyup(line) {
         let keys = _autotyperKeysToCVM[codes[i]] || [codes[i]];
         for (let j = 0; j < keys.length; j++) {
             currentConn.sendGuac(['key', keys[j].toString(), '0']);
-            await sleep(5);
+            await sleep(3);
         };
     }
 }
 
 async function _handlerEnter(line) {
     currentConn.sendGuac(['key', '65293', '1']);
-    await sleep(5);
+    await sleep(3);
     currentConn.sendGuac(['key', '65293', '0']);
 }
 
@@ -120,10 +142,17 @@ async function _autotyperRunScript(s) {
 
 async function _autotyperType(text) {
     for (let i = 0; i < text.length; i++) {
-        currentConn.sendGuac(['key', text.charCodeAt(i).toString(), '1']);
-        await sleep(5);
-        currentConn.sendGuac(['key', text.charCodeAt(i).toString(), '0']);
-        await sleep(5);
+        let _key = text[i];
+        let key = _autotyperKeysToCVM[_key] || [_key.charCodeAt(0)];
+        console.log(key == _key, key, _key);
+        for (let j = 0; j < key.length; j++) {
+            currentConn.sendGuac(['key', key[j].toString(), '1']);
+            await sleep(3);
+        }
+        for (let j = 0; j < key.length; j++) {
+            currentConn.sendGuac(['key', key[j].toString(), '0']);
+            await sleep(3);
+        }
     }
 }
 
