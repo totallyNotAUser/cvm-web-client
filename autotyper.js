@@ -62,7 +62,11 @@ const _autotyperKeysToCVM = {
     '<':         [65505, 44],
     '>':         [65505, 46],
     '?':         [65505, 47],
-}
+};
+
+let _autotyperVars = {};
+const _autotyperVarRegex = /\${([a-zA-Z_][0-9a-zA-Z_]*)}/g;
+const _autotyperVarNameRegex = /^[a-zA-Z_][0-9a-zA-Z_]*$/;
 
 async function _handlerKey(line) {
     const codes = line.split(' ').slice(1);
@@ -114,6 +118,15 @@ async function _handlerSleep(line) {
 
 function _handlerComment(line) {}
 
+function _handlerSetGlobal(line) {
+    let varName = line.split(' ')[1];
+    if (!_autotyperVarNameRegex.test(varName)) {
+        throw `Variable name '${varName}' does not match regex`;
+    }
+    let varContent = line.split(' ').slice(2).join(' ');
+    _autotyperVars[varName] = varContent;
+}
+
 const _autotyperCmdHandlers = {
     ':key': _handlerKey,
     ':keydown': _handlerKeydown,
@@ -122,6 +135,7 @@ const _autotyperCmdHandlers = {
     ':enter': _handlerEnter,
     ':sleep': _handlerSleep,
     ':#': _handlerComment,
+    ':setglobal': _handlerSetGlobal,
 }
 
 function _autotyperEvalExpr(expr) {
@@ -136,14 +150,25 @@ function _autotyperRemoveIndent(_line) {
     return line
 }
 
+function _autotyperExpandVars(line) {
+    return line.replaceAll(_autotyperVarRegex, (match, p1) => {
+        if (!_autotyperVars.hasOwnProperty(p1)) {
+            throw `Variable '${p1}' isn't set`;
+        }
+        return _autotyperVars[p1];
+    });
+}
+
 async function _autotyperRunScript(s) {
     const cmds = s.split('\n').slice(1);
     for (let i = 0; i < cmds.length;) {
         if (!cmds[i].startsWith(':')) {
-            await _autotyperType(cmds[i]);
+            let line = _autotyperExpandVars(cmds[i]);
+            await _autotyperType(line);
             i++;
         } else {
             let line = _autotyperRemoveIndent(cmds[i]);
+            line = _autotyperExpandVars(line);
             let arr = line.split(' ');
             let cmd = arr[0];
             if (cmd == ':if' || cmd == ':elseif') {
