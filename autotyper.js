@@ -66,7 +66,7 @@ const _autotyperKeysToCVM = {
 
 let _autotyperVars = {};
 const _autotyperVarRegex = /\${([a-zA-Z_][0-9a-zA-Z_]*)}/g;
-const _autotyperVarNameRegex = /^[a-zA-Z_][0-9a-zA-Z_]*$/;
+const _autotyperVarNameRegex = /^[a-zA-Z_][0-9a-zA-Z_]*(?:\$[0-9a-zA-Z_]+)?$/;
 
 async function _handlerKey(line) {
     const codes = line.split(' ').slice(1);
@@ -119,12 +119,26 @@ async function _handlerSleep(line) {
 function _handlerComment(line) {}
 
 function _handlerSetGlobal(line) {
-    let varName = line.split(' ')[1];
-    if (!_autotyperVarNameRegex.test(varName)) {
-        throw `Variable name '${varName}' does not match regex`;
+    let varNameAndType = line.split(' ')[1];
+    if (!_autotyperVarNameRegex.test(varNameAndType)) {
+        throw `Variable name '${varNameAndType}' does not match regex`;
     }
     let varContent = line.split(' ').slice(2).join(' ');
-    _autotyperVars[varName] = varContent;
+    let varName = varNameAndType.split('$')[0];
+    let varType = varNameAndType.includes('$') ? varNameAndType.split('$')[1] : (_autotyperVars[varName]?.type || 'string');
+    if (varType == 'string') {
+        _autotyperVars[varName] = {
+            type: varType,
+            value: varContent
+        };
+    } else if (varType == 'int') {
+        _autotyperVars[varName] = {
+            type: varType,
+            value: parseInt(eval(varContent))
+        };
+    } else {
+        throw `Unknown variable type ${varType}`;
+    }
 }
 
 const _autotyperCmdHandlers = {
@@ -155,7 +169,7 @@ function _autotyperExpandVars(line) {
         if (!_autotyperVars.hasOwnProperty(p1)) {
             throw `Variable '${p1}' isn't set`;
         }
-        return _autotyperVars[p1];
+        return _autotyperVars[p1].value;
     });
 }
 
