@@ -181,6 +181,16 @@ async function _autotyperRunScript(s) {
                 while (_autotyperRemoveIndent(cmds[i]) != ':endif') i++;
             } else if (cmd == ':endif') {
                 i++;
+            } else if (cmd == ':while') {
+                let exprResult = _autotyperEvalExpr(arr.slice(1).join(' '));
+                // if the expr is false, 'rewind' the execution AFTER the nearest :endwhile
+                if (!exprResult) {
+                    while(_autotyperRemoveIndent(cmds[i].split(' ')[0]) != ':endwhile') i++;
+                    i++;
+                } else i++;
+            } else if (cmd == ':endwhile') {
+                // if we are running :endwhile, then we know that the nearest :while's expr was true, so 'rewind' back to the nearest :while, to check the expr again
+                while (_autotyperRemoveIndent(cmds[i].split(' ')[0]) != ':while') i--;
             }
             else {
                 await _autotyperCmdHandlers[cmd](line);
