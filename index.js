@@ -405,6 +405,14 @@ function endTurn() {
 function toggleKeyboard() {
     alert('Sorry, visual keyboard is not implemented yet');
 }
+function sendCtrlAltDel() {
+    currentConn.sendGuac(['key', '65507', '1']); // hold ctrl
+    currentConn.sendGuac(['key', '65513', '1']); // hold alt
+    currentConn.sendGuac(['key', '65535', '1']); // hold del
+    currentConn.sendGuac(['key', '65535', '0']); // release del
+    currentConn.sendGuac(['key', '65513', '0']); // release alt
+    currentConn.sendGuac(['key', '65507', '0']); // release ctrl
+}
 function voteYes() {
     currentConn.sendGuac(['vote', '1']);
 }
