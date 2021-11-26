@@ -6,8 +6,8 @@ class VMWebsocket {
         this.makeAndConnectWS();
     }
     makeAndConnectWS() {
-        if (window.location.protocol == 'https:') this.ws = new WebSocket(`wss://${this.connIP}/`, ['guacamole']);
-        else this.ws = new WebSocket(`ws://${this.connIP}/`, ['guacamole']);
+        if (window.location.protocol == 'https:') this.ws = new WebSocket(`wss://${this.connIP}`, ['guacamole']);
+        else this.ws = new WebSocket(`ws://${this.connIP}`, ['guacamole']);
         if (this.eventCallbacks.onMessage !== null) {
             this.onMessage = this.eventCallbacks.onMessage.bind(this);
             this.ws.onmessage = this.onMessageWrapper.bind(this);
